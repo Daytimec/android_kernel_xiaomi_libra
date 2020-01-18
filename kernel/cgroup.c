@@ -367,8 +367,6 @@ struct cg_cgroup_link {
 	struct css_set *cg;
 };
 
-static struct kmem_cache *cg_link_pool;
-
 /* The default css_set - used by init and its children prior to any
  * hierarchies being mounted. It contains a pointer to the root state
  * for each subsystem. Also used to anchor the list of css_sets. Not
@@ -455,7 +453,7 @@ static void __put_css_set(struct css_set *cg, int taskexit)
 		}
 		rcu_read_unlock();
 
-		kmem_cache_free(cg_link_pool, link);
+		kfree(link);
 	}
 
 	write_unlock(&css_set_lock);
@@ -613,7 +611,7 @@ static void free_cg_links(struct list_head *tmp)
 
 	list_for_each_entry_safe(link, saved_link, tmp, cgrp_link_list) {
 		list_del(&link->cgrp_link_list);
-		kmem_cache_free(cg_link_pool, link);
+		kfree(link);
 	}
 }
 
@@ -628,7 +626,7 @@ static int allocate_cg_links(int count, struct list_head *tmp)
 	int i;
 	INIT_LIST_HEAD(tmp);
 	for (i = 0; i < count; i++) {
-		link = kmem_cache_alloc(cg_link_pool, GFP_KERNEL);
+		link = kmalloc(sizeof(*link), GFP_KERNEL);
 		if (!link) {
 			free_cg_links(tmp);
 			return -ENOMEM;
@@ -1789,7 +1787,7 @@ static void cgroup_kill_sb(struct super_block *sb) {
 				 cgrp_link_list) {
 		list_del(&link->cg_link_list);
 		list_del(&link->cgrp_link_list);
-		kmem_cache_free(cg_link_pool, link);
+		kfree(link);
 	}
 	write_unlock(&css_set_lock);
 
@@ -4731,8 +4729,6 @@ int __init cgroup_init(void)
 	int err;
 	int i;
 	unsigned long key;
-
-	cg_link_pool = KMEM_CACHE(cg_cgroup_link, SLAB_HWCACHE_ALIGN | SLAB_PANIC);
 
 	err = bdi_init(&cgroup_backing_dev_info);
 	if (err)
