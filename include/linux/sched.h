@@ -789,6 +789,9 @@ struct signal_struct {
 	struct mutex cred_guard_mutex;	/* guard against foreign influences on
 					 * credential calculations
 					 * (notably. ptrace) */
+#ifdef CONFIG_ANDROID_SIMPLE_LMK
+	bool slmk_victim;
+#endif
 };
 
 /*
