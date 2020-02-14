@@ -1518,7 +1518,6 @@ CONFIG_INPUT_EVDEV=y
 # CONFIG_INPUT_KEYRESET is not set
 # CONFIG_INPUT_KEYCOMBO is not set
 # CONFIG_SENSORS_HALL is not set
-# CONFIG_COLLECT_TOUCH_ACTIVE_INFO is not set
 
 #
 # Input Device Drivers
