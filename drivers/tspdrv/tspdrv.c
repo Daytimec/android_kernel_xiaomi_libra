@@ -40,7 +40,7 @@
 #include <linux/platform_device.h>
 #include <asm/uaccess.h>
 #include <asm/atomic.h>
-#include <tspdrv.h>
+#include "tspdrv.h"
 
 static int g_nTimerPeriodMs = 50;
 
@@ -53,12 +53,12 @@ static atomic_t g_bRuntimeRecord;
 #endif
 
 #if defined(CONFIG_TSPDRV_DRV2604)
-#include <ImmVibeSPI_DRV2604.c>
+#include "ImmVibeSPI_DRV2604.c"
 #elif defined(CONFIG_TSPDRV_ISA1000)
-#include <ImmVibeSPI_ISA1000.c>
+#include "ImmVibeSPI_ISA1000.c"
 #endif
 #if (defined(VIBE_DEBUG) && defined(VIBE_RECORD)) || defined(VIBE_RUNTIME_RECORD)
-#include <tspdrvRecorder.c>
+#include "tspdrvRecorder.c"
 #endif
 
 #define VERSION_STR " v5.0.36.6\n"
@@ -91,11 +91,11 @@ static int g_nMajor = 0;
 #endif
 
 
-#include <tspdrvOutputDataHandler.c>
+#include "tspdrvOutputDataHandler.c"
 #ifdef CONFIG_HIGH_RES_TIMERS
-#include <VibeOSKernelLinuxHRTime.c>
+#include "VibeOSKernelLinuxHRTime.c"
 #else
-#include <VibeOSKernelLinuxTime.c>
+#include "VibeOSKernelLinuxTime.c"
 #endif
 
 asmlinkage void _DbgOut(int level, const char *fmt,...)
