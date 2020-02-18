@@ -11,7 +11,6 @@
 
 #include <linux/types.h>
 #include <linux/bug.h>
-#include <linux/simple_lmk.h>
 #include <asm/relaxed.h>
 
 struct timespec;
@@ -114,16 +113,7 @@ static inline int test_ti_thread_flag(struct thread_info *ti, int flag)
 #define test_thread_flag(flag) \
 	test_ti_thread_flag(current_thread_info(), flag)
 #define test_thread_flag_relaxed(flag) \
-	({									\
-	bool ret;							\
-									\
-	if (flag == TIF_MEMDIE)						\
-		ret = simple_lmk_victim();				\
-	else								\
-		ret = test_ti_thread_flag_relaxed(current_thread_info(), flag);	\
-									\
-	ret;								\
-})
+	test_ti_thread_flag_relaxed(current_thread_info(), flag)
 
 #define set_need_resched()	set_thread_flag(TIF_NEED_RESCHED)
 #define clear_need_resched()	clear_thread_flag(TIF_NEED_RESCHED)
